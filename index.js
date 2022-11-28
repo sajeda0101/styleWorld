@@ -25,7 +25,7 @@ async function run(){
     try{
         const categoryCollection = client.db("style-world").collection("categories");
         const productsCollection = client.db("style-world").collection("products");
-
+        const bookedCollection=client.db('style-world').collection('bookedProduct')
         // second hand category
         app.get("/category", async (req, res) => {
             let query = {}
@@ -34,12 +34,21 @@ async function run(){
             res.send(category);
             
           })
+
+          // single product get by category
           app.get('/products',async(req,res)=>{
             const category_id=req.query.category_id;
             let query={category_id}
               const cursor=productsCollection.find(query);
               const products=await cursor.toArray();
               res.send(products)
+          })
+          
+          // book item
+          app.post('/booked',async(req,res)=>{
+            const user=req.body;
+            const bookingProduct=await bookedCollection.insertOne(user);
+            res.send(bookingProduct)
           })
 
     }
