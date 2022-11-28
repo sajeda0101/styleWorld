@@ -44,7 +44,7 @@ async function run(){
               res.send(products)
           })
           
-          // book item
+          // book item create
           app.post('/booked',async(req,res)=>{
             const user=req.body;
             const bookingProduct=await bookedCollection.insertOne(user);
