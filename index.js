@@ -46,9 +46,16 @@ async function run(){
           
           // book item create
           app.post('/booked',async(req,res)=>{
-            const user=req.body;
-            const bookingProduct=await bookedCollection.insertOne(user);
+            const product=req.body;
+            const bookingProduct=await bookedCollection.insertOne(product);
             res.send(bookingProduct)
+          })
+          
+          // product add
+          app.post('/addProduct',async(req,res)=>{
+            const product=req.body;
+            const addProduct=await productsCollection.insertOne(product);
+            res.send(addProduct)
           })
 
     }
