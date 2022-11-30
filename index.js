@@ -118,6 +118,11 @@ async function run(){
       const addUser=await userCollection.insertOne(query);
       res.send(addUser)
     })  
+    app.get('/users',async(req,res)=>{
+      const query={}
+      const users=await  userCollection.find(query).toArray();
+      res.send(users)
+    })
 
   //   app.delete('/users/:id',async(req,res)=>{
   //     const id=req.params.id;
