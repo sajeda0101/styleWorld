@@ -77,7 +77,7 @@ async function run(){
             res.send(addProduct)
           })
 
-          // 
+          // add product get data
           app.get('/addProduct',async(req,res)=>{
             const email=req.body.email
             const query={email:email}
@@ -126,18 +126,18 @@ async function run(){
     })
 
     // 
-    app.put('/users/admin/:id',async(req,res)=>{
-      const id=req.params.id;
-      const filter={_id:ObjectId(id)};
-      const options={upsert:true}
-      const updateDoc={
-        $set:{
-          role:'admin'
-        }
-      }
-      const result=await userCollection.updateOne(filter,options,updateDoc);
-      res.send(result)
-    })
+    // app.put('/users/admin/:id',async(req,res)=>{
+    //   const id=req.params.id;
+    //   const filter={_id:ObjectId(id)};
+    //   const options={upsert:true}
+    //   const updateDoc={
+    //     $set:{
+    //       role:'admin'
+    //     }
+    //   }
+    //   const result=await userCollection.updateOne(filter,options,updateDoc);
+    //   res.send(result)
+    // // })
 
     app.delete('/users/:id',async(req,res)=>{
       const id=req.params.id;
