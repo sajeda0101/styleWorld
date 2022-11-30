@@ -22,6 +22,21 @@ app.get('/', (req, res) => {
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.dbebnio.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
+function verifyJWT(req,res,next){
+    const authHeader=req.headers.authorization;
+    if(!authHeader){
+      return res.status(401).send('unauthorization')
+    }
+    const token=authHeader.split(' ')[1]
+    jwt.verify(token,process.env.ACCESS_TOKEN_KEY,function(err,decoded){
+      if(err){
+        return res.status(403).send({messsage:'forbidden access'})
+      }
+      req.decoded=decoded;
+      next()
+    })
+
+}
 async function run(){
     try{
         const categoryCollection = client.db("style-world").collection("categories");
@@ -72,10 +87,12 @@ async function run(){
           })
 
             // data get for my order
-    app.get('/booking',async(req,res)=>{
-      
-  
-     const email=req.body.email
+    app.get('/booking',verifyJWT,async(req,res)=>{
+     const email=req.body.email;
+     const decodedEmail=req.decoded.email;
+     if(email !==decodedEmail){
+        return res.status(403).send({messsage:'forbidden access'})
+     }
      const query={email:email}
       const cursor=bookedCollection.find(query);
       const reviews=await cursor.toArray();
