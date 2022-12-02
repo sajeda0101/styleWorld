@@ -1,8 +1,12 @@
 const express = require('express')
 const app = express();
 require("dotenv").config();
-const jwt=require('jsonwebtoken')
 const cors=require('cors')
+const corsConfig = {
+  origin: '*',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE']
+  }
 const { MongoClient, ServerApiVersion,ObjectId} = require('mongodb');
 
 const port = process.env.PORT || 5000;
@@ -11,7 +15,7 @@ const port = process.env.PORT || 5000;
 
 
 // middleware
-app.use(cors());
+app.use(cors(corsConfig))
 app.use(express.json());
 
 app.get('/', (req, res) => {
@@ -22,22 +26,7 @@ app.get('/', (req, res) => {
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.dbebnio.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-// jwt token
-// function veriFyJWT(req,res,next){
-//   const authHeader=req.headers.authorization;
-//   if(!authHeader){
-//     res.status(401).send({message:'anauthorized access'})
-//   }
-//   const token=authHeader.split(' ' )[1];
-//   jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,function(err,decoded){
 
-//     if(err){
-//       res.status(401).send({message:'anauthorized access'})
-//     }
-//       req.decoded=decoded;
-//       next()
-//   })
-// }
 
 
 async function run(){
@@ -48,19 +37,7 @@ async function run(){
         const userCollection=client.db('style-world').collection('users')
         const productAddCollection=client.db('style-world').collection('addProduct')
         
-      // Admin verify
-      // const verifyAdmin=async (req,res,next)=>{
-      //   const decodedEmail=req.decoded.email;
-      //   const query={email:decodedEmail}
-      //   const user=await userCollection.findOne(query)
-      //   if(user?.role !=='admin')
-      //   {
-      //     return res.status(403).send({message:'forbidden access'})
-
-      //   }
-      //   next();
-      // }
-
+      
 
         // second hand category
         app.get("/category", async (req, res) => {
@@ -135,19 +112,6 @@ async function run(){
       res.send(bookingProduct)
     })
 
-    // jwt
-    // app.post('/jwt',async(req,res)=>{
-    //   const email=req.query.email;
-    //   const query={email:email}
-    //   const user=await userCollection.findOne(query)
-    //   if(user){
-    //     const token=jwt.sign({email},process.env.ACCESS_TOKEN_KEY,{expiresIn:'7d'})
-    //   return  res.send({accessToken:token})
-
-    //   }
-    
-    //   res.status(403).send({accessToken:'token'})
-    // })
 
     // all api for users
     //user info
@@ -161,23 +125,6 @@ async function run(){
       const users=await  userCollection.find(query).toArray()
       res.send(users)
     })
-
-    // // 
-    // app.get('/usersType',async(req,res)=>{
-    //  const role=req.query.role;
-    //  const query={role};
-    //  const result=await userCollection.find(query).toArray();
-    //  res.send(result)
-    // })
-
-    // admin 
-    app.get('/users/admin/:email',async(req,res)=>{
-      const email=req.params.email;
-      const query={email}
-      const user=await userCollection.findOne(query);
-      res.send({isAdmin:user?.email.role === 'admin'})
-    })
-  
 
     app.delete('/users/:id',async(req,res)=>{
       const id=req.params.id;
